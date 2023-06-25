@@ -55,6 +55,7 @@ def get_all_images(id,place):
     res_json = res.json()
     i = 0
     origin_img_list = []
+    print(f"Total Photos: {res_json['result']['pics_total']})
     for pic in res_json['result']['pics_array']:
         download_all_images(("https:" + pic['origin_img']),image_path)
         i = i + 1
