@@ -35,7 +35,10 @@ def md5(value):
     m.update(value.encode('utf-8'))
     return m.hexdigest()
 
-def get_all_images(id):
+def get_all_images(id,place):
+    image_path = "../Pics/" + str(place)
+    if not os.path.exists(image_path):
+        os.makedirs(image_path)
     t = int(time.time() * 1000)
     data['activityNo'] = id
     data['_t'] = t
@@ -53,33 +56,30 @@ def get_all_images(id):
     i = 0
     origin_img_list = []
     for pic in res_json['result']['pics_array']:
-        download_all_images(("https:" + pic['origin_img']),id)
+        download_all_images(("https:" + pic['origin_img']),image_path)
         i = i + 1
 
-    print(f"Total Photos: {res_json['result']['pics_total']}, Downloaded: i")
+    print(f"Total Photos: {res_json['result']['pics_total']}, Downloaded: " + str(i))
 
-def download_all_images(url,id):
+def download_all_images(url,image_path):
     image_name = url.split('/')[-1].split('?')[0]
     print(image_name)
     response = requests.get(url)
     time.sleep(2)
-    image_path = "../dist/" + str(id)
-    if not os.path.exists(image_path):
-        os.makedirs(image_path)
     # 确保请求成功
     if response.status_code == 200:
         img = Image.open(BytesIO(response.content))
         # 在你希望的位置保存图片
         img.save(os.path.join(image_path, image_name))
 
-
 id = input("Enter photoplus ID (eg: 87654321): ")
 # count = input("Enter number of photos: ")
+place = input("Enter where will you go: ")
 
-if count.isnumeric():
-  data['count'] = int(count)
+# if count.isnumeric():
+#   data['count'] = int(count)
 if id.isnumeric():
-  get_all_images(int(id))
+  get_all_images(int(id),place)
 else:
   print('Wrong ID')
 
