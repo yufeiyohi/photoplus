@@ -9,8 +9,6 @@ import time
 import requests
 import hashlib
 from operator import itemgetter
-from PIL import Image
-from io import BytesIO
 
 SALT = 'laxiaoheiwu'
 COUNT = 9999
@@ -55,7 +53,6 @@ def get_all_images(id,place):
     res_json = res.json()
     i = 0
     origin_img_list = []
-    print(f"Total Photos: {res_json['result']['pics_total']})
     for pic in res_json['result']['pics_array']:
         download_all_images(("https:" + pic['origin_img']),image_path)
         i = i + 1
@@ -65,13 +62,10 @@ def get_all_images(id,place):
 def download_all_images(url,image_path):
     image_name = url.split('/')[-1].split('?')[0]
     print(image_name)
-    response = requests.get(url)
+    response = requests.get(url, stream=True)
     time.sleep(2)
-    # 确保请求成功
-    if response.status_code == 200:
-        img = Image.open(BytesIO(response.content))
-        # 在你希望的位置保存图片
-        img.save(os.path.join(image_path, image_name))
+    with open(os.path.join(image_path, image_name), 'wb') as out_file:
+        out_file.write(response.content)
 
 id = input("Enter photoplus ID (eg: 87654321): ")
 # count = input("Enter number of photos: ")
